@@ -43,8 +43,9 @@ void Renderer::Draw() {
     mainImageShader.Use();
     for (uint8_t i = 0; i < mainImageShader.nsamplers; i++) {
         const auto& h = mainImageShader.iChannel[i];
+        glUniform1i(h.sampler, i);
         glActiveTexture(GL_TEXTURE0 + i);
-        glBindTexture(h.type, h.handle);
+        glBindTexture(h.type, h.texhandle);
     }
     // init triangle and draw
     glBindVertexArray(VAO);

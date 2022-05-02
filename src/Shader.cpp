@@ -51,6 +51,7 @@ Shader::Shader(const json& src){
     glAttachShader(programHandle,vertexShader);
     
     std::string samplersString = "";
+    std::string samplerNames[4];
     auto fragShader = glCreateShader(GL_FRAGMENT_SHADER);
     {
         nsamplers = 0;
@@ -60,15 +61,16 @@ Shader::Shader(const json& src){
             bool mipmap = item["sampler"]["filter"] == "mipmap";
             if (type == "texture") {
                 samplerType = "2D";
-                iChannel[nsamplers].handle = ImageCache::GetTexture(item["src"],mipmap);
+                iChannel[nsamplers].texhandle = ImageCache::GetTexture(item["src"],mipmap);
                 iChannel[nsamplers].type = GL_TEXTURE_2D;
             }
             else if (type == "cubemap") {
                 samplerType = "3D";
-                iChannel[nsamplers].handle = ImageCache::GetCubemap(item["src"],mipmap);
+                iChannel[nsamplers].texhandle = ImageCache::GetCubemap(item["src"],mipmap);
                 iChannel[nsamplers].type = GL_TEXTURE_CUBE_MAP;
             }
-            samplersString.append(fmt::format("uniform sampler{} iChannel{};\n", samplerType, item["channel"].get<uint8_t>()));
+            samplerNames[nsamplers] = fmt::format("iChannel{}", item["channel"].get<uint8_t>());
+            samplersString.append(fmt::format("uniform sampler{} {};\n", samplerType, samplerNames[nsamplers]));
           
             nsamplers++;
         }
@@ -136,6 +138,13 @@ Shader::Shader(const json& src){
         if (loc >= 0) {
             item.uniform = loc;
         }
+    }
+
+    // sampler uniforms
+    for (int i = 0; i < nsamplers; i++) {
+        auto loc = glGetUniformLocation(programHandle, samplerNames[i].c_str());
+        Assert(loc >= 0,"Failed to locate sampler {}",samplerNames[i]); // these must exist
+        iChannel[i].sampler = loc;
     }
 }
 

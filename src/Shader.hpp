@@ -23,11 +23,12 @@ struct Shader{
     GLuint windowSizeUniform = INVALID_HANDLE;
     GLuint timeUniform = INVALID_HANDLE;
     GLuint programHandle = INVALID_HANDLE;
-    struct sampler {
-        GLuint handle = INVALID_HANDLE;
+    struct Sampler {
+        GLuint sampler = INVALID_HANDLE;
+        GLuint texhandle = INVALID_HANDLE;
         GLuint type = INVALID_HANDLE;
     };
-    sampler iChannel[4];
+    Sampler iChannel[4];
     uint8_t nsamplers = 0;
 };
 
