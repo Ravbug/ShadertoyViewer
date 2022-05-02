@@ -55,10 +55,21 @@ Shader::Shader(const json& src){
     {
         nsamplers = 0;
         for (const auto& item : src["inputs"]) {
-            auto handle = ImageCache::Get(item["src"]);
-            iChannel[nsamplers].handle = handle;
-            iChannel[nsamplers].type = GL_TEXTURE_2D;
-            samplersString.append(fmt::format("uniform sampler{} iChannel{};\n","2D", nsamplers));
+            const char* samplerType = nullptr;
+            const std::string& type = item["ctype"];
+            bool mipmap = item["sampler"]["filter"] == "mipmap";
+            if (type == "texture") {
+                samplerType = "2D";
+                iChannel[nsamplers].handle = ImageCache::GetTexture(item["src"],mipmap);
+                iChannel[nsamplers].type = GL_TEXTURE_2D;
+            }
+            else if (type == "cubemap") {
+                samplerType = "3D";
+                iChannel[nsamplers].handle = ImageCache::GetCubemap(item["src"],mipmap);
+                iChannel[nsamplers].type = GL_TEXTURE_CUBE_MAP;
+            }
+            samplersString.append(fmt::format("uniform sampler{} iChannel{};\n", samplerType, item["channel"].get<uint8_t>()));
+          
             nsamplers++;
         }
     }

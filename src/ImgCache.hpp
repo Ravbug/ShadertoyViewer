@@ -8,10 +8,11 @@ struct ImageCache {
 	ImageCache() = delete;
 
 	// load the texture from shadertoy, or return the cached handle if present
-	static GLuint Get(const std::string& path);
+	static GLuint GetTexture(const std::string& path, bool mipmap);
+	static GLuint GetCubemap(const std::string& path, bool mipmap);
 
 	// remove everything from the cache
 	static void Clear();
 private:
-	static std::unordered_map<std::string, unsigned int> cache;
+	static std::unordered_map<std::string, unsigned int> textureCache, cubemapCache;
 };
