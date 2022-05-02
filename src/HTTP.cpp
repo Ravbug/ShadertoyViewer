@@ -24,16 +24,12 @@ fetchResult fetch(const std::string& url) {
 		curl_easy_setopt(curl, CURLOPT_HEADERDATA, &header_string);
 
 		auto result = curl_easy_perform(curl);
-		char* url;
-		long response_code;
-		double elapsed;
+		long response_code = 0;
 		if (result != CURLE_OK) {
 			Fatal("Curl failed: {}", curl_easy_strerror(result));
 		}
 		else {
 			curl_easy_getinfo(curl, CURLINFO_RESPONSE_CODE, &response_code);
-			curl_easy_getinfo(curl, CURLINFO_TOTAL_TIME, &elapsed);
-			curl_easy_getinfo(curl, CURLINFO_EFFECTIVE_URL, &url);
 		}
 		curl_easy_cleanup(curl);
 		curl = NULL;

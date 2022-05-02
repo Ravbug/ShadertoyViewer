@@ -108,7 +108,8 @@ int main(int argc, char** argv){
     while (!exit){
         //Bind program
         // set time uniform
-        auto timeSince = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - startTime).count();
+        auto fbgin = std::chrono::high_resolution_clock::now();
+        auto timeSince = std::chrono::duration_cast<std::chrono::duration<float>>(fbgin - startTime).count();
         while (SDL_PollEvent(&event)){
             switch (event.type) {
                 case SDL_QUIT:
@@ -184,11 +185,13 @@ int main(int argc, char** argv){
             ImGui::Render();
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         }
-        
-        SDL_SetWindowTitle(win, fmt::format("ShadertoyViewer t = {:.2f}s - {}",timeSince,GPUNAME).c_str());
-        
+                
         // present & wait for vblank
         SDL_GL_SwapWindow(win);
+        auto frameTime = std::chrono::duration_cast<std::chrono::duration<float>>(std::chrono::high_resolution_clock::now() - fbgin).count();
+
+        SDL_SetWindowTitle(win, fmt::format("ShadertoyViewer t = {:.2f}s {:.0f} fps - {}", timeSince, 1/frameTime, GPUNAME).c_str());
+
     }
 
     // deinit

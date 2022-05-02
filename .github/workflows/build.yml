@@ -19,6 +19,11 @@ jobs:
         run: mkdir -p build; cd build; CC=/usr/bin/gcc-8 CXX=/usr/bin/g++-8 cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release  -Wno-dev ..
       - name: Build
         run: cd build; cmake --build . --config release --target install
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ShadertoyViewer_linux64
+          path: build/Release/ShadertoyViewer
   
   build-mac:
     name: macOS
@@ -36,12 +41,12 @@ jobs:
       - name: Build
         run: cd build; cmake --build . --config release --target install
       - name: Compress App
-        run: cd build/release; zip -r -9 ShadertoyViewer_macOS.zip *.app
+        run: cd build/Release; zip -r -9 ShadertoyViewer.zip *.app
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ShadertoyViewer_macOS
-          path: build/release/ShadertoyViewer_macOS.zip
+          path: build/Release/ShadertoyViewer.zip
   
   build-win:
     name: Windows
