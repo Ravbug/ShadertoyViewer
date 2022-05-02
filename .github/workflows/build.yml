@@ -26,7 +26,7 @@ jobs:
           path: build/Release/ShadertoyViewer
 
   build-linux-arm:
-    name: Linux ARM
+    name: Linux ARM64
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -46,9 +46,9 @@ jobs:
         run: sudo apt-get update
         continue-on-error: true
       - name: Install Host Dependencies
-        run: sudo apt update && sudo apt install -y cmake:amd64 ninja-build:amd64 --no-install-recommends
+        run: sudo apt update && sudo apt install -y cmake:amd64 ninja-build:amd64 gcc-aarch64-linux-gnu:amd64 g++-aarch64-linux-gnu:amd64 --no-install-recommends
       - name: Install Target Dependencies
-        run: sudo apt install libgl1-mesa-dev:arm64  freeglut3-dev:arm64 libx11-dev:arm64 libxext-dev:arm64 libxrender-dev:arm64 libxrandr-dev:arm64 libxtst-dev:arm64 libxt-dev:arm64 gcc-aarch64-linux-gnu:amd64 g++-aarch64-linux-gnu:amd64 -y --no-install-recommends
+        run: sudo apt install libgl1-mesa-dev:arm64  freeglut3-dev:arm64 libx11-dev:arm64 libxext-dev:arm64 libxrender-dev:arm64 libxrandr-dev:arm64 libxtst-dev:arm64 libxt-dev:arm64 -y --no-install-recommends
       - name: Configure
         run: mkdir -p build; cd build; CC=/usr/bin/aarch64-linux-gnu-gcc CXX=/usr/bin/aarch64-linux-gnu-g++ cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release  -Wno-dev ..
       - name: Build
@@ -57,6 +57,40 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: ShadertoyViewer_linuxarm64
+          path: build/Release/ShadertoyViewer
+          
+  build-linux-arm32:
+    name: Linux ARM
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Add key file
+        shell: bash
+        env:
+          KEY: ${{secrets.SHADERTOY_API_KEY}}
+        run: echo "#define API_KEY \"$KEY\"" > src/key.hpp
+      - name: Setup Repositories
+        run: sudo mv config/crosscomp-sources.list /etc/apt/sources.list
+      - name: Check apt sources
+        run: cat /etc/apt/sources.list
+      - name:  Add arm64 as architecture
+        run: sudo dpkg --add-architecture armhf
+      - name: Update APT
+        run: sudo apt-get update
+        continue-on-error: true
+      - name: Install Host Dependencies
+        run: sudo apt update && sudo apt install -y cmake:amd64 ninja-build:amd64 gcc-arm-linux-gnueabihf:amd64 g++-arm-linux-gnueabihf:amd64 --no-install-recommends
+      - name: Install Target Dependencies
+        run: sudo apt install libgl1-mesa-dev:armhf  freeglut3-dev:armhf libx11-dev:armhf libxext-dev:armhf libxrender-dev:armhf libxrandr-dev:armhf libxtst-dev:armhf libxt-dev:armhf -y --no-install-recommends
+      - name: Configure
+        run: mkdir -p build; cd build; CC=/usr/bin/arm-linux-gnueabihf-gcc CXX=/usr/bin/arm-linux-gnueabihf-g++ cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release  -Wno-dev ..
+      - name: Build
+        run: cd build; cmake --build . --config release --target install
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ShadertoyViewer_linuxarm
           path: build/Release/ShadertoyViewer
   
   build-mac:
