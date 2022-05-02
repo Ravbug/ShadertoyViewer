@@ -41,12 +41,12 @@ jobs:
       - name: Build
         run: cd build; cmake --build . --config release --target install
       - name: Compress App
-        run: cd build/Release; zip -r -9 ShadertoyViewer.zip *.app
+        run: cd build/; zip -r -9 ShadertoyViewer.zip *.app
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ShadertoyViewer_macOS
-          path: build/Release/ShadertoyViewer.zip
+          path: build/ShadertoyViewer.zip
   
   build-win:
     name: Windows
@@ -55,9 +55,10 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v2
       - name: Add key file
+        shell: powershell
         env:
           KEY: ${{secrets.SHADERTOY_API_KEY}}
-        run: echo "#define API_KEY \"$KEY\"" > src\key.hpp
+        run: echo "#define API_KEY `"$KEY`"" > src\key.hpp
       - name: Configure
         run: mkdir -p build; cd build; cmake -DCMAKE_BUILD_TYPE=Release ..
       - name: Build
