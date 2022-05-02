@@ -77,12 +77,12 @@ jobs:
       - name: Build
         run: cd build; cmake --build . --config release --target install
       - name: Compress App
-        run: cd build/; zip -r -9 ShadertoyViewer.zip *.app
+        run: cd build/Release; zip -r -9 ShadertoyViewer.zip *.app
       - name: Upload Artifacts
         uses: actions/upload-artifact@v2
         with:
           name: ShadertoyViewer_macOS
-          path: build/ShadertoyViewer.zip
+          path: build/Release/ShadertoyViewer.zip
   
   build-win:
     name: Windows
