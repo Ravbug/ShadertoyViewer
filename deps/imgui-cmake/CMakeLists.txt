@@ -12,3 +12,4 @@ target_include_directories(${PROJECT_NAME}
     "imgui/"
     "../SDL2/include"
 )
+target_compile_features(${PROJECT_NAME} PRIVATE cxx_std_17)

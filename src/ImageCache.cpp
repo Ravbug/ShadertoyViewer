@@ -1,7 +1,6 @@
 #include "ImgCache.hpp"
 #include <stb_image.h>
 #include "Utility.hpp"
-#include <GL/GL.h>
 
 decltype(ImageCache::cache) ImageCache::cache;
 

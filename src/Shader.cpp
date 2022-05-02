@@ -82,11 +82,14 @@ Shader::Shader(const json& src){
             mainImage(color, gl_FragCoord.xy);
         }
     )";
+	
+	const std::string& sv = src["code"];
+	
     // get the fragment shader
     const GLchar* const fragShaderSrc[] = {
         fs_header,
         samplersString.c_str(),
-        string_view(src["code"]).data(),
+		sv.data(),
         fs_footer
     };
     glShaderSource(fragShader, sizeof(fragShaderSrc)/sizeof(fragShaderSrc[0]), fragShaderSrc, NULL);
