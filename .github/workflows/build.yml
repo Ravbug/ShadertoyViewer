@@ -1,0 +1,64 @@
+name: Build-App
+on: push
+
+jobs:
+  build-linux:
+    name: Linux x64
+    runs-on: ubuntu-18.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Add key file
+        shell: bash
+        env:
+          KEY: ${{secrets.SHADERTOY_API_KEY}}
+        run: echo "#define API_KEY \"$KEY\"" > src/key.hpp
+      - name: Install Dependencies
+        run: sudo apt update && sudo apt install -y cmake g++-8 ninja-build libgl1-mesa-dev freeglut3-dev --no-install-recommends
+      - name: Configure
+        run: mkdir -p build; cd build; CC=/usr/bin/gcc-8 CXX=/usr/bin/g++-8 cmake -G "Ninja" -DCMAKE_BUILD_TYPE=Release  -Wno-dev ..
+      - name: Build
+        run: cd build; cmake --build . --config release --target install
+  
+  build-mac:
+    name: macOS
+    runs-on: macos-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Add key file
+        shell: bash
+        env:
+          KEY: ${{secrets.SHADERTOY_API_KEY}}
+        run: echo "#define API_KEY \"$KEY\"" > src/key.hpp
+      - name: Configure
+        run: mkdir -p build; cd build; cmake -G "Xcode" -DCMAKE_BUILD_TYPE=Release ..
+      - name: Build
+        run: cd build; cmake --build . --config release --target install
+      - name: Compress App
+        run: cd build/release; zip -r -9 ShadertoyViewer_macOS.zip *.app
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ShadertoyViewer_macOS
+          path: build/release/ShadertoyViewer_macOS.zip
+  
+  build-win:
+    name: Windows
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Add key file
+        env:
+          KEY: ${{secrets.SHADERTOY_API_KEY}}
+        run: echo "#define API_KEY \"$KEY\"" > src\key.hpp
+      - name: Configure
+        run: mkdir -p build; cd build; cmake -DCMAKE_BUILD_TYPE=Release ..
+      - name: Build
+        run: cd build; cmake --build . --config release --target install
+      - name: Upload Artifacts
+        uses: actions/upload-artifact@v2
+        with:
+          name: ShadertoyViewer_macOS
+          path: build\release\*.exe
