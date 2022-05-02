@@ -1,0 +1,7 @@
+deb [arch=armhf] http://archive.ubuntu.com/ubuntu/ focal main restricted universe
+deb [arch=armhf] http://security.ubuntu.com/ubuntu/ focal-security main restricted universe
+deb [arch=armhf] http://archive.ubuntu.com/ubuntu/ focal-updates main restricted universe
+
+deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports/ focal main restricted multiverse universe
+deb [arch=armhf] http://ports.ubuntu.com/ubuntu-ports/ focal-updates main restricted multiverse universe
+
