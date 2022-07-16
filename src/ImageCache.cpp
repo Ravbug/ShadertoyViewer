@@ -81,7 +81,7 @@ unsigned int ImageCache::GetCubemap(const std::string& path, bool mipmap) {
 }
 
 void ImageCache::Clear() {
-    auto& clear = [](auto& cache) {
+    auto clear = [](auto& cache) {
         for (const auto& item : cache) {
             glDeleteTextures(1, &item.second);
         }
